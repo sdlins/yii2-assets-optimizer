@@ -1,9 +1,12 @@
 {
-  "name": "slinstj/yii2-assets-optmizer",
-  "type": "yii2-extension",
-  "autoload": {
-    "psr-4": {
-      "slinstj\\assets\\optmizer\\": ""
+    "name": "slinstj/yii2-assets-optmizer",
+    "type": "yii2-extension",
+    "require": {
+        "yiisoft/yii2": "2.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "slinstj\\assets\\optmizer\\": ""
+        }
     }
-  }
 }
