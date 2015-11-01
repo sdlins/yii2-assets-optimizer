@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace slinstj\assets\optimizer\tests\assets;
+namespace slinstj\yao\tests\assets;
 
 use yii\web\AssetBundle;
 
@@ -18,7 +18,8 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'assets/css/site.css'
+        'assets/css/site.css',
+        'assets/css/other.css'
     ];
     public $js = [
         'assets/js/main.js',

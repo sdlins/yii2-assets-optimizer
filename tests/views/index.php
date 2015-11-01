@@ -1,7 +1,7 @@
 <?php
-use slinstj\assets\optimizer\tests\assets\AppAsset;
-
 /* @var $this \yii\web\View */
+
+use slinstj\yao\tests\assets\AppAsset;
 
 AppAsset::register($this);
 ?>
@@ -10,6 +10,10 @@ AppAsset::register($this);
         <?php $this->head() ?>
     </head>
     <body>
+        <?php $this->beginBody() ?>
+
+        <?= $data ?>
+
         <?php $this->endBody() ?>
     </body>
 </html>

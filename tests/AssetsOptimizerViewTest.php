@@ -1,8 +1,9 @@
 <?php
 
-namespace slinstj\assets\optimizer\tests;
+namespace slinstj\yao\tests;
 
-use slinstj\assets\optimizer\AssetsOptimizerView;
+use yii\web\AssetManager;
+use slinstj\yao\AssetsOptimizerView as View;
 use Yii;
 
 /**
@@ -10,40 +11,46 @@ use Yii;
  */
 class AssetsOptimizerViewTest extends TestCase
 {
-
-    /**
-     * @var AssetsOptimizerView
-     */
-    protected $object;
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp()
     {
+        parent::setUp();
         $this->mockWebApplication();
-        $this->object = new AssetsOptimizerView;
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+//        FileHelper::removeDirectory(Yii::getAlias('@runtime/assets'));
+    }
+
+    public function testRender()
+    {
+        $view = $this->mockView();
+        $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
+
+        $this->assertEquals('test view Hello World!.', $content);
     }
 
     /**
-     * @covers slinstj\assets\optimizer\AssetsOptimizerView::init
-     * @todo   Implement testInit().
+     * @return View
      */
-    public function testInit()
+    protected function mockView()
     {
-        $this->assertInstanceOf('\slinstj\assets\optimizer\AssetsOptimizerView', Yii::$app->view);
-        $this->assertInstanceOf('\slinstj\assets\optimizer\AssetsOptimizerView', $this->object);
+        return new View([
+            'assetManager' => $this->mockAssetManager(),
+        ]);
     }
 
-    /**
-     * @covers slinstj\assets\optimizer\AssetsOptimizerView::endPage
-     * @todo   Implement testEndPage().
-     */
-    public function testEndPage()
+    protected function mockAssetManager()
     {
-        $r = $this->object->renderFile(__DIR__ . '/testing-view.php');
-        $this->assertTrue($r);
-    }
+        $assetDir = Yii::getAlias('@runtime/assets');
+        if (!is_dir($assetDir)) {
+            mkdir($assetDir, 0777, true);
+        }
 
+        return new AssetManager([
+            'basePath' => $assetDir,
+            'baseUrl' => '/assets',
+        ]);
+    }
 }

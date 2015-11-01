@@ -1,7 +1,5 @@
 <?php
-namespace slinstj\assets\optimizer;
-
-use yii\helpers;
+namespace slinstj\yao;
 
 /**
  * A modified View class capable of optimizing (minify and combine) assets bundles.
