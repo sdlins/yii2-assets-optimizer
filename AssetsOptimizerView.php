@@ -1,49 +1,21 @@
 <?php
-namespace slinstj\yao;
+namespace slinstj\AssetsOptimizer;
 
 /**
  * A modified View class capable of optimizing (minify and combine) assets bundles.
- *
  * @author Sidney Lins (slinstj@gmail.com)
  */
-class AssetsOptimizerView extends \yii\web\View
+class View extends \yii\web\View
 {
-    const TYPE_ALL = 1;
-    const TYPE_CSS = 2;
-    const TYPE_JS = 3;
 
     /** @var bool */
-    public $enableOptimizer= true;
+    public $minify = true;
 
-    /** @var array */
-    public $typesToOptimize = [self::TYPE_ALL];
+    /** @var bool */
+    public $combine = true;
 
-    /** @var string path alias to web base (in url) */
-    public $webPath = '@web';
-
-    /** @var string path alias to web base (absolute) */
-    public $webrootPath = '@webroot';
-
-    /** @var string path where to publish optimized css file(s) */
+    /** @var string path where to publish optimized css file(s) in */
     public $optimizedCssPath = '@webroot/web/css';
-
-    /** @var string path where to publish optimized css file(s) */
-    public $optimizedJsPath = '@webroot/web/js';
-
-    /** @var array js positions that should not be minified */
-    public $jsPositionsToSkip = [];
-
-    /**
-     * @throws \rmrevin\yii\minify\Exception
-     */
-    public function init()
-    {
-        parent::init();
-
-        /**
-         * @todo Check or prepares directory structure.
-         */
-    }
 
     /**
      * @inheritdoc
@@ -78,15 +50,6 @@ class AssetsOptimizerView extends \yii\web\View
      * @return self
      */
     protected function optimizeCss()
-    {
-        return $this;
-    }
-
-
-    /**
-     * @return self
-     */
-    protected function optimizeJs()
     {
         return $this;
     }
