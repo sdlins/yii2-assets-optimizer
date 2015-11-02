@@ -54,7 +54,8 @@ class View extends \yii\web\View
     {
         $min = new Minify\CSS();
         foreach (array_keys($this->cssFiles) as $filePath) {
-            $min->add($filePath);
+            $resolvedPath = $this->resolvePath($filePath);
+            $min->add($resolvedPath);
             unset($this->cssFiles[$filePath]);
         }
         $result = $min->minify();
@@ -67,5 +68,13 @@ class View extends \yii\web\View
         file_put_contents($finalPath, $result, LOCK_EX);
 
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
+    }
+
+    protected function resolvePath($path)
+    {
+        $basePath = \Yii::getAlias('@webroot');
+        $baseUrl = str_replace(\Yii::getAlias('@web'), '', $path);
+        $resolvedPath = realpath($basePath . DIRECTORY_SEPARATOR . $baseUrl);
+        return $resolvedPath;
     }
 }
