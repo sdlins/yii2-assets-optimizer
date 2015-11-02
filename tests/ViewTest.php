@@ -42,15 +42,15 @@ class ViewTest extends TestCase
     protected function mockView()
     {
         return new View([
-            'optimizedCssPath' => '@runtime/assets',
-            'optimizedCssUrl' => '@runtime/assets',
+            'optimizedCssPath' => '@webPath/assets',
+            'optimizedCssUrl' => '@webUrl/assets',
             'assetManager' => $this->mockAssetManager(),
         ]);
     }
 
     protected function mockAssetManager()
     {
-        $assetDir = Yii::getAlias('@runtime/assets');
+        $assetDir = Yii::getAlias('@runtime/web/assets');
         if (!is_dir($assetDir)) {
             mkdir($assetDir, 0777, true);
         }
