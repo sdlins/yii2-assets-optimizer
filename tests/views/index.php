@@ -1,9 +1,9 @@
 <?php
 /* @var $this \yii\web\View */
 
-use slinstj\yao\tests\assets\AppAsset;
+use slinstj\AssetsOptimizer\tests\assets\MyAppAsset;
 
-AppAsset::register($this);
+MyAppAsset::register($this);
 ?>
 <html>
     <head>

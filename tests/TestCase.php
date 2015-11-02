@@ -1,5 +1,5 @@
 <?php
-namespace slinstj\yao\tests;
+namespace slinstj\AssetsOptimizer\tests;
 
 use yii\di\Container;
 use yii\helpers\ArrayHelper;
