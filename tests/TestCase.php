@@ -59,4 +59,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         Yii::$app = null;
         Yii::$container = new Container();
     }
+
+    protected function debug($data)
+    {
+        return fwrite(STDERR, print_r($data, TRUE));
+    }
 }
