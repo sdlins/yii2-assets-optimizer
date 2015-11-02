@@ -42,6 +42,8 @@ class ViewTest extends TestCase
     protected function mockView()
     {
         return new View([
+            'optimizedCssPath' => '@runtime/assets',
+            'optimizedCssUrl' => '@runtime/assets',
             'assetManager' => $this->mockAssetManager(),
         ]);
     }
