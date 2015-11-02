@@ -28,12 +28,12 @@ class ViewTest extends TestCase
 //        FileHelper::removeDirectory(Yii::getAlias('@runtime/assets'));
     }
 
-    public function testRender()
+    public function testHtmlContainsRightReferencesForAssets()
     {
         $view = $this->mockView();
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
 
-        $this->assertEquals('test view Hello World!.', $content);
+        $this->assertEquals(1, preg_match('#<link href="(.)*/assets/[0-9a-z]+\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
     }
 
     /**
