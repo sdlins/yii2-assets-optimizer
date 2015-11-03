@@ -53,15 +53,7 @@ class View extends \yii\web\View
     protected function optimizeCss()
     {
         $result = $this->minifyFiles(array_keys($this->cssFiles), 'css');
-
-        $filename = sha1($result) . ".css";
-        $finalPath = \Yii::getAlias($this->optimizedCssPath) . DIRECTORY_SEPARATOR . $filename;
-
-        $finalUrl = sprintf('%s/%s', \Yii::getAlias($this->optimizedCssUrl), $filename);
-
-        file_put_contents($finalPath, $result, LOCK_EX);
-
-        $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
+        $this->saveOptimizedCssFile($result);
     }
 
     protected function minifyFiles($fileUrls, $type)
@@ -85,5 +77,18 @@ class View extends \yii\web\View
         $baseUrl = str_replace(\Yii::getAlias('@web'), '', $path);
         $resolvedPath = realpath($basePath . DIRECTORY_SEPARATOR . $baseUrl);
         return $resolvedPath;
+    }
+
+    protected function saveOptimizedCssFile($content)
+    {
+        $filename = sha1($content) . ".css";
+        $filePath = \Yii::getAlias($this->optimizedCssPath);
+        \yii\helpers\FileHelper::createDirectory($filePath);
+
+        $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
+        $finalUrl = sprintf('%s/%s', \Yii::getAlias($this->optimizedCssUrl), $filename);
+        file_put_contents($finalPath, $content, LOCK_EX);
+
+        $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
     }
 }
