@@ -52,13 +52,7 @@ class View extends \yii\web\View
      */
     protected function optimizeCss()
     {
-        $min = new Minify\CSS();
-        foreach (array_keys($this->cssFiles) as $filePath) {
-            $resolvedPath = $this->resolvePath($filePath);
-            $min->add($resolvedPath);
-            unset($this->cssFiles[$filePath]);
-        }
-        $result = $min->minify();
+        $result = $this->minifyFiles(array_keys($this->cssFiles), 'css');
 
         $filename = sha1($result) . ".css";
         $finalPath = \Yii::getAlias($this->optimizedCssPath) . DIRECTORY_SEPARATOR . $filename;
@@ -68,6 +62,21 @@ class View extends \yii\web\View
         file_put_contents($finalPath, $result, LOCK_EX);
 
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
+    }
+
+    protected function minifyFiles($fileUrls, $type)
+    {
+        $min = ($type = strtolower($type)) === 'css' ? new Minify\CSS() : new Minify\JS;
+        foreach ($fileUrls as $filePath) {
+            $resolvedPath = $this->resolvePath($filePath);
+            $min->add($resolvedPath);
+            if($type === 'css') {
+                unset($this->cssFiles[$filePath]);
+            } else {
+                unset($this->jsFiles[$filePath]);
+            }
+        }
+        return $min->minify();
     }
 
     protected function resolvePath($path)
