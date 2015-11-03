@@ -60,4 +60,11 @@ class ViewTest extends TestCase
             'baseUrl' => '/assets',
         ]);
     }
+
+    protected function findByRegex($regex, $content, $match = 1)
+    {
+        $matches = [];
+        preg_match($regex, $content, $matches);
+        return $matches[$match];
+    }
 }
