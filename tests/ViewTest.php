@@ -33,7 +33,7 @@ class ViewTest extends TestCase
         $view = $this->mockView();
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
 
-        $this->assertEquals(1, preg_match('#<link href="(.)*/assets/[0-9a-z]+\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
+        $this->assertEquals(1, preg_match('#<link href="(.)*/assets/(.)*[0-9a-z]+\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
     }
 
     public function testOptimizedCssFileExists()
@@ -53,8 +53,8 @@ class ViewTest extends TestCase
     protected function mockView()
     {
         return new View([
-            'optimizedCssPath' => '@webPath/assets',
-            'optimizedCssUrl' => '@webUrl/assets',
+            'optimizedCssPath' => '@webPath/assets/other',
+            'optimizedCssUrl' => '@webUrl/assets/other',
             'assetManager' => $this->mockAssetManager(),
         ]);
     }
