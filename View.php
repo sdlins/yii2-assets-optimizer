@@ -17,7 +17,7 @@ class View extends \yii\web\View
     public $combine = true;
 
     /** @var string path where to publish optimized css file(s) in */
-    public $optimizedCssPath = '@webroot/web/css';
+    public $optimizedCssPath = '@app/web/css';
 
     /** @var string path where to publish optimized css file(s) in */
     public $optimizedCssUrl = '@web/css';
