@@ -41,8 +41,7 @@ class ViewTest extends TestCase
         $view = $this->mockView();
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
         $fileUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
-        $this->debug($fileUrl);
-        $path = \Yii::getAlias('@webPath') . $fileUrl;
+        $path = \Yii::getAlias('@webroot') . \Yii::getAlias('@web') . $fileUrl;
 
         $this->assertFileExists($path, "Expected file '$fileUrl' could not be found in '$path'.");
     }
@@ -53,8 +52,7 @@ class ViewTest extends TestCase
     protected function mockView()
     {
         return new View([
-            'optimizedCssPath' => '@webPath/assets/other',
-            'optimizedCssUrl' => '@webUrl/assets/other',
+            'optimizedCssPath' => '@webroot/runtime/web/assets/other',
             'assetManager' => $this->mockAssetManager(),
         ]);
     }

@@ -41,10 +41,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             'id' => 'testapp',
             'basePath' => __DIR__,
             'vendorPath' => dirname(__DIR__) . '/vendor',
-            'aliases' => [
-                '@webPath' => __DIR__ . '/runtime/web',
-                '@webUrl' => '/',
-            ],
             'components' => [
                 'request' => [
                     'cookieValidationKey' => 'wefJDF8sfdsfSDefwqdxj9oq',
@@ -53,6 +49,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 ],
             ]
         ], $config));
+        \Yii::setAlias('@webroot', __DIR__);
+        \Yii::setAlias('@web', '/runtime/web');
     }
 
     /**
