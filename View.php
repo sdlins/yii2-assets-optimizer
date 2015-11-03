@@ -19,9 +19,6 @@ class View extends \yii\web\View
     /** @var string path where to publish optimized css file(s) in */
     public $optimizedCssPath = '@app/web/css';
 
-    /** @var string path where to publish optimized css file(s) in */
-    public $optimizedCssUrl = '@web/css';
-
     /**
      * @inheritdoc
      */
@@ -86,9 +83,10 @@ class View extends \yii\web\View
         \yii\helpers\FileHelper::createDirectory($filePath);
 
         $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
-        $finalUrl = sprintf('%s/%s', \Yii::getAlias($this->optimizedCssUrl), $filename);
         file_put_contents($finalPath, $content, LOCK_EX);
 
+        $partialUrl = str_replace(\Yii::getAlias('@webroot'), '', $filePath);
+        $finalUrl = str_replace(\Yii::getAlias('@web'), '', $partialUrl) . DIRECTORY_SEPARATOR . $filename;
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
     }
 }
