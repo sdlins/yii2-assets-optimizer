@@ -20,6 +20,14 @@ class View extends \yii\web\View
     public $optimizedCssPath = '@app/web/css';
 
     /**
+     * @var string Optional. Url where optimized css file(s) were published in. If
+     * not given, url will be formed by '@web' plus [[optimizedCssPath]] without any alias.
+     * For example: [optimizedCssPath] = '@someAlias/path/to/myDir' and
+     * [[optimizedCssUrl]] is null, url will be '@web/path/to/myDir'.
+     */
+    public $optimizedCssUrl;
+
+    /**
      * @inheritdoc
      */
     public function endPage($ajaxMode = false)
@@ -85,10 +93,18 @@ class View extends \yii\web\View
         $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
         file_put_contents($finalPath, $content, LOCK_EX);
 
-        preg_match('~^(@.*?)(\/|\\\\)(.*)~', $this->optimizedCssPath, $matches);
-        $alias = isset($matches[1]) ? $matches[1] : '@webroot';
-        $desiredDir = !isset($matches[2], $matches[3]) ?: implode('', [$matches[2], $matches[3]]);
-        $finalUrl = \Yii::getAlias('@web') . $desiredDir . DIRECTORY_SEPARATOR . $filename;
+        if (!empty($this->optimizedCssUrl)) {
+            if (! $this->isValidPath($this->optimizedCssUrl)) {
+                throw new \yii\web\NotFoundHttpException("The 'optimizedCssUrl' ($realOptCssUrl) given is invalid.");
+            }
+            $finalUrl = \Yii::getAlias($this->optimizedCssPath);
+        } else {
+            preg_match('~^(@.*?)(\/|\\\\)(.*)~', $this->optimizedCssPath, $matches);
+            $alias = isset($matches[1]) ? $matches[1] : '@web';
+            $desiredDir = !isset($matches[2], $matches[3]) ?: implode('', [$matches[2], $matches[3]]);
+            $finalUrl = $alias . $desiredDir . DIRECTORY_SEPARATOR . $filename;
+        }
+
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
     }
 
