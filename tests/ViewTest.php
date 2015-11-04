@@ -97,6 +97,6 @@ class ViewTest extends TestCase
     {
         $matches = [];
         preg_match($regex, $content, $matches);
-        return $matches[$match];
+        return !isset($matches[$match]) ?: $matches[$match];
     }
 }
