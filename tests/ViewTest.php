@@ -51,12 +51,11 @@ class ViewTest extends TestCase
     /**
      * @return View
      */
-    protected function mockView()
+    protected function mockView(array $config = [])
     {
-        return new View([
-            'optimizedCssPath' => '@webroot/runtime/web/assets/other',
+        return new View(\yii\helpers\ArrayHelper::merge([
             'assetManager' => $this->mockAssetManager(),
-        ]);
+        ], $config));
     }
 
     protected function mockAssetManager()
