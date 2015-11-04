@@ -4,6 +4,7 @@ namespace slinstj\AssetsOptimizer\tests;
 
 use yii\web\AssetManager;
 use slinstj\AssetsOptimizer\View;
+use yii\helpers\FileHelper;
 use Yii;
 
 /**
@@ -27,7 +28,7 @@ class ViewTest extends TestCase
     protected function tearDown()
     {
         parent::tearDown();
-//        FileHelper::removeDirectory(Yii::getAlias('@runtime/assets'));
+        FileHelper::removeDirectory(Yii::getAlias('@runtime/web'));
     }
 
     public function testHtmlContainsRightReferencesForAssets()
