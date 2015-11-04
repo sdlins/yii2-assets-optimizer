@@ -85,8 +85,10 @@ class View extends \yii\web\View
         $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
         file_put_contents($finalPath, $content, LOCK_EX);
 
-        $partialUrl = str_replace(\Yii::getAlias('@webroot'), '', $filePath);
-        $finalUrl = str_replace(\Yii::getAlias('@web'), '', $partialUrl) . DIRECTORY_SEPARATOR . $filename;
+        preg_match('~^(@.*?)(\/|\\\\)(.*)~', $this->optimizedCssPath, $matches);
+        $alias = isset($matches[1]) ? $matches[1] : '@webroot';
+        $desiredDir = !isset($matches[2], $matches[3]) ?: implode('', [$matches[2], $matches[3]]);
+        $finalUrl = \Yii::getAlias('@web') . $desiredDir . DIRECTORY_SEPARATOR . $filename;
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
     }
 }
