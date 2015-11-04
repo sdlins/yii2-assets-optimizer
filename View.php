@@ -86,12 +86,7 @@ class View extends \yii\web\View
 
     protected function saveOptimizedCssFile($content)
     {
-        $filename = sha1($content) . ".css";
-        $filePath = \Yii::getAlias($this->optimizedCssPath);
-        \yii\helpers\FileHelper::createDirectory($filePath);
-
-        $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
-        file_put_contents($finalPath, $content, LOCK_EX);
+        $finalPath = $this->saveFile($content, \Yii::getAlias($this->optimizedCssPath), 'css');
 
         if (!empty($this->optimizedCssUrl)) {
             if (! $this->isValidPath($this->optimizedCssUrl)) {
@@ -106,6 +101,20 @@ class View extends \yii\web\View
         }
 
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
+    }
+
+    protected function saveFile($content, $filePath, $ext)
+    {
+        $filename = sha1($content) . '.' . $ext;
+        \yii\helpers\FileHelper::createDirectory($filePath);
+        $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
+
+        if (file_put_contents($finalPath, $content, LOCK_EX) !== false) {
+            return $finalPath;
+        } else {
+            throw new \Exception("Was not possible to save the file '$finalPath'.");
+        }
+
     }
 
     protected function isValidPath($path)
