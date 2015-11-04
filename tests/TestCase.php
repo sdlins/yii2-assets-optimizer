@@ -49,8 +49,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 ],
             ]
         ], $config));
-        \Yii::setAlias('@webroot', __DIR__);
-        \Yii::setAlias('@web', '/runtime/web');
     }
 
     /**

@@ -20,6 +20,8 @@ class ViewTest extends TestCase
     {
         parent::setUp();
         $this->mockWebApplication();
+        \Yii::setAlias('@webroot', __DIR__ . '/runtime/web');
+        \Yii::setAlias('@web', '/runtime/web');
     }
 
     protected function tearDown()
