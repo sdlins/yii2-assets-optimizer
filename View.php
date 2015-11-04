@@ -2,6 +2,8 @@
 namespace slinstj\AssetsOptimizer;
 
 use MatthiasMullie\Minify;
+use yii\helpers\FileHelper;
+use yii\helpers\Html;
 
 /**
  * A modified View class capable of optimizing (minify and combine) assets bundles.
@@ -95,13 +97,13 @@ class View extends \yii\web\View
     {
         $finalPath = $this->saveFile($content, $this->optimizedCssPath, 'css');
         $finalUrl = $this->optimizedCssUrl . DIRECTORY_SEPARATOR . basename($finalPath);
-        $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
+        $this->cssFiles[$finalPath] = Html::cssFile($finalUrl);
     }
 
     protected function saveFile($content, $filePath, $ext)
     {
         $filename = sha1($content) . '.' . $ext;
-        \yii\helpers\FileHelper::createDirectory($filePath);
+        FileHelper::createDirectory($filePath);
         $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
 
         if (file_put_contents($finalPath, $content, LOCK_EX) !== false) {
