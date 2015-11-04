@@ -91,4 +91,9 @@ class View extends \yii\web\View
         $finalUrl = \Yii::getAlias('@web') . $desiredDir . DIRECTORY_SEPARATOR . $filename;
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
     }
+
+    protected function isValidPath($path)
+    {
+        return !empty($path) && realpath(($realPath = \Yii::getAlias($path)));
+    }
 }
