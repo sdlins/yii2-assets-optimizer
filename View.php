@@ -30,6 +30,13 @@ class View extends \yii\web\View
      */
     public $optimizedCssUrl = '@web/yao';
 
+    public function init()
+    {
+        parent::init();
+        $this->optimizedCssPath = \Yii::getAlias($this->optimizedCssPath);
+        $this->optimizedCssUrl = \Yii::getAlias($this->optimizedCssUrl);
+    }
+
     /**
      * @inheritdoc
      */
@@ -81,17 +88,13 @@ class View extends \yii\web\View
 
     protected function resolvePath($path)
     {
-        $basePath = \Yii::getAlias('@webroot');
-        $baseUrl = str_replace(\Yii::getAlias('@web'), '', $path);
-        $resolvedPath = realpath($basePath . DIRECTORY_SEPARATOR . $baseUrl);
-        return $resolvedPath;
+        return realpath($this->optimizedCssPath . DIRECTORY_SEPARATOR . $this->optimizedCssUrl);
     }
 
     protected function saveOptimizedCssFile($content)
     {
-        $finalPath = $this->saveFile($content, \Yii::getAlias($this->optimizedCssPath), 'css');
-        $finalUrl = \Yii::getAlias($this->optimizedCssUrl) . DIRECTORY_SEPARATOR . basename($finalPath);
-
+        $finalPath = $this->saveFile($content, $this->optimizedCssPath, 'css');
+        $finalUrl = $this->optimizedCssUrl . DIRECTORY_SEPARATOR . basename($finalPath);
         $this->cssFiles[$finalPath] = \yii\helpers\Html::cssFile($finalUrl);
     }
 
