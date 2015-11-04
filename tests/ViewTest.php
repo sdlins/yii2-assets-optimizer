@@ -38,9 +38,21 @@ class ViewTest extends TestCase
         $this->assertEquals(1, preg_match('#<link href="/runtime/web/yao/[0-9a-z]+\\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
     }
 
-    public function testOptimizedCssFileExists()
+    public function testOptimizedCssFileExistsOnDefaults()
     {
         $view = $this->mockView();
+        $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
+        $fileUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
+        $path = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $fileUrl);
+        $this->assertFileExists($path, "Expected file '$fileUrl' could not be found in '$path'.");
+    }
+
+    public function testOptimizedCssFileExists()
+    {
+        $view = $this->mockView([
+            'optimizedCssPath' => '@webroot/my/path',
+            'optimizedCssUrl' => '@web/my/path',
+        ]);
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
         $fileUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
         $path = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $fileUrl);
