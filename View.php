@@ -107,7 +107,7 @@ class View extends \yii\web\View
         if (file_put_contents($finalPath, $content, LOCK_EX) !== false) {
             return $finalPath;
         } else {
-            throw new \Exception("Was not possible to save the file '$finalPath'.");
+            throw new \Exception("It was not possible to save the file '$finalPath'.");
         }
 
     }
