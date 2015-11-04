@@ -35,7 +35,7 @@ class ViewTest extends TestCase
     {
         $view = $this->mockView();
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
-        $this->assertEquals(1, preg_match('#<link href="/runtime/web/yao/[0-9a-z]+\\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
+        $this->assertEquals(1, preg_match('#<link href="/runtime/web/yao/[0-9a-z]+\\.yao\\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
     }
 
     public function testOptimizedCssFileExistsOnDefaults()

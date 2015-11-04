@@ -102,7 +102,7 @@ class View extends \yii\web\View
 
     protected function saveFile($content, $filePath, $ext)
     {
-        $filename = sha1($content) . '.' . $ext;
+        $filename = substr(sha1($content), 0, 15) . '.yao.' . $ext;
         FileHelper::createDirectory($filePath);
         $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
 
