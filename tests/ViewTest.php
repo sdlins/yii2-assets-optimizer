@@ -47,6 +47,17 @@ class ViewTest extends TestCase
         $this->assertFileExists($path, "Expected file '$fileUrl' could not be found in '$path'.");
     }
 
+    public function testOptimizedCssFileNotExists()
+    {
+        $view = $this->mockView([
+            'optimizedCssPath' => '@webroot/other/path',
+        ]);
+        $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
+        $fileUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
+        $path = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $fileUrl);
+        $this->assertFileNotExists($path, "Expected file '$fileUrl' SHOULD NOT be found in '$path'.");
+    }
+
     /**
      * @return View
      */
