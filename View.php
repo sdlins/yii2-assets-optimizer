@@ -108,9 +108,4 @@ class View extends \yii\web\View
         }
 
     }
-
-    protected function isValidPath($path)
-    {
-        return !empty($path) && realpath(($realPath = \Yii::getAlias($path)));
-    }
 }
