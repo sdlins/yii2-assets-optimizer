@@ -108,6 +108,10 @@ class View extends \yii\web\View
         FileHelper::createDirectory($filePath);
         $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
 
+        if (is_file($finalPath)) {
+            return $finalPath;
+        }
+
         if (file_put_contents($finalPath, $content, LOCK_EX) !== false) {
             return $finalPath;
         } else {
