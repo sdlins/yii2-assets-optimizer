@@ -90,7 +90,9 @@ class View extends \yii\web\View
 
     protected function resolvePath($path)
     {
-        return realpath($this->optimizedCssPath . DIRECTORY_SEPARATOR . $this->optimizedCssUrl);
+        $webroot = \Yii::getAlias('@webroot');
+        $web = str_replace(\Yii::getAlias('@web'), '', $path);
+        return realpath($webroot . DIRECTORY_SEPARATOR . $web);
     }
 
     protected function saveOptimizedCssFile($content)
