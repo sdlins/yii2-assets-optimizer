@@ -35,16 +35,22 @@ class ViewTest extends TestCase
     {
         $view = $this->mockView();
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
+
         $this->assertEquals(1, preg_match('#<link href="/runtime/web/yao/[0-9a-z]+\\.yao\\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
+        $this->assertEquals(1, preg_match('#<script src="/runtime/web/yao/[0-9a-z]+\\.yao\\.js">#', $content), 'Html view does not contain the optimized JS file: ' . $content);
     }
 
     public function testOptimizedCssFileExistsOnDefaults()
     {
         $view = $this->mockView();
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
-        $fileUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
-        $path = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $fileUrl);
-        $this->assertFileExists($path, "Expected file '$fileUrl' could not be found in '$path'.");
+        $cssUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
+        $jsUrl = $this->findByRegex('#<script src="(.*)?">#', $content, 1);
+        $cssPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $cssUrl);
+        $jsPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $jsUrl);
+
+        $this->assertFileExists($cssPath, "Expected file '$cssUrl' could not be found in '$cssPath'.");
+        $this->assertFileExists($jsPath, "Expected file '$jsUrl' could not be found in '$jsPath'.");
     }
 
     public function testOptimizedCssFileExists()
@@ -54,9 +60,13 @@ class ViewTest extends TestCase
             'optimizedCssUrl' => '@web/my/path',
         ]);
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
-        $fileUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
-        $path = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $fileUrl);
-        $this->assertFileExists($path, "Expected file '$fileUrl' could not be found in '$path'.");
+        $cssUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
+        $jsUrl = $this->findByRegex('#<script src="(.*)?">#', $content, 1);
+        $cssPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $cssUrl);
+        $jsPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $jsUrl);
+
+        $this->assertFileExists($cssPath, "Expected file '$cssUrl' could not be found in '$cssPath'.");
+        $this->assertFileExists($jsPath, "Expected file '$jsUrl' could not be found in '$jsPath'.");
     }
 
     public function testOptimizedCssFileNotExists()
@@ -65,9 +75,13 @@ class ViewTest extends TestCase
             'optimizedCssPath' => '@webroot/other/path',
         ]);
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
-        $fileUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
-        $path = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $fileUrl);
-        $this->assertFileNotExists($path, "Expected file '$fileUrl' SHOULD NOT be found in '$path'.");
+        $cssUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
+        $jsUrl = $this->findByRegex('#<script src="(.*)?">#', $content, 1);
+        $cssPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $cssUrl);
+        $jsPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $jsUrl);
+
+        $this->assertFileNotExists($cssPath, "Expected file '$cssUrl' SHOULD NOT be found in '$cssPath'.");
+        $this->assertFileNotExists($jsPath, "Expected file '$jsUrl' SHOULD NOT be found in '$jsPath'.");
     }
 
     /**
