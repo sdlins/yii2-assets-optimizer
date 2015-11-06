@@ -14,29 +14,40 @@ class View extends \yii\web\View
 
     /** @var bool */
     public $minify = true;
-
     /** @var bool */
     public $combine = true;
-
     /**
      * @var string Path where optimized css file will be published in. If you change this,
      * you *must* change [[optmizedCssPath]] accordingly.
      * Optional. Defaults to '@webroot/yao'.
      */
     public $optimizedCssPath = '@webroot/yao';
-
     /**
      * @var string Web acessible Url where optimized css file(s) will be published in. 
      * *Must* be in according to [[optmizedCssPath]].
      * Optional. Defaults to '@web/yao'.
      */
     public $optimizedCssUrl = '@web/yao';
+    /**
+     * @var string Path where optimized css file will be published in. If you change this,
+     * you *must* change [[optmizedCssPath]] accordingly.
+     * Optional. Defaults to '@webroot/yao'.
+     */
+    public $optimizedJsPath = '@webroot/yao';
+    /**
+     * @var string Web acessible Url where optimized css file(s) will be published in.
+     * *Must* be in according to [[optmizedCssPath]].
+     * Optional. Defaults to '@web/yao'.
+     */
+    public $optimizedJsUrl = '@web/yao';
 
     public function init()
     {
         parent::init();
         $this->optimizedCssPath = \Yii::getAlias($this->optimizedCssPath);
         $this->optimizedCssUrl = \Yii::getAlias($this->optimizedCssUrl);
+        $this->optimizedJsPath = \Yii::getAlias($this->optimizedJsPath);
+        $this->optimizedJsUrl = \Yii::getAlias($this->optimizedJsUrl);
     }
 
     /**
@@ -50,6 +61,7 @@ class View extends \yii\web\View
 
         if ($this->minify === true) {
             $this->optimizeCss();
+            $this->optimizeJs();
         }
 
         echo strtr(
@@ -71,6 +83,14 @@ class View extends \yii\web\View
     {
         $result = $this->minifyFiles(array_keys($this->cssFiles), 'css');
         $this->saveOptimizedCssFile($result);
+    }
+
+    protected function optimizeJs()
+    {
+        foreach ($this->jsFiles as $jsPosition => $files) {
+            $result = $this->minifyFiles(array_keys($files), 'js');
+            $this->saveOptimizedJsFile($result, $jsPosition);
+        }
     }
 
     protected function minifyFiles($fileUrls, $type)
@@ -100,6 +120,13 @@ class View extends \yii\web\View
         $finalPath = $this->saveFile($content, $this->optimizedCssPath, 'css');
         $finalUrl = $this->optimizedCssUrl . DIRECTORY_SEPARATOR . basename($finalPath);
         $this->cssFiles[$finalPath] = Html::cssFile($finalUrl);
+    }
+
+    protected function saveOptimizedJsFile($content, $jsPosition)
+    {
+        $finalPath = $this->saveFile($content, $this->optimizedJsPath, 'js');
+        $finalUrl = $this->optimizedJsUrl . DIRECTORY_SEPARATOR . basename($finalPath);
+        $this->jsFiles[$jsPosition][$finalPath] = Html::jsFile($finalUrl);
     }
 
     protected function saveFile($content, $filePath, $ext)
