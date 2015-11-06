@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace slinstj\AssetsOptimizer\tests\assets;
+namespace slinstj\AssetsOptimizer\tests\bundles;
 
 use yii\web\AssetBundle;
 
@@ -13,16 +13,16 @@ use yii\web\AssetBundle;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class MyAppAsset extends AssetBundle
+class SourcePathAsset extends AssetBundle
 {
     public $sourcePath = __DIR__;
-    public $baseUrl = '@web';
     public $css = [
         'css/site.css',
-        'css/other.css'
+        'css/other.css',
     ];
     public $js = [
         'js/main.js',
+        'js/other.js',
     ];
     public $depends = [
     ];

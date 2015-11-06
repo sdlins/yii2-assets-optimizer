@@ -4,6 +4,7 @@ namespace slinstj\AssetsOptimizer\tests;
 
 use yii\web\AssetManager;
 use slinstj\AssetsOptimizer\View;
+use slinstj\AssetsOptimizer\tests\bundles;
 use yii\helpers\FileHelper;
 use Yii;
 
@@ -28,59 +29,73 @@ class ViewTest extends TestCase
     protected function tearDown()
     {
         parent::tearDown();
-        FileHelper::removeDirectory(Yii::getAlias('@runtime/web'));
+        FileHelper::removeDirectory(Yii::getAlias('@runtime/web/assets'));
     }
 
     public function testHtmlContainsRightReferencesForAssets()
     {
         $view = $this->mockView();
+        bundles\BasicAsset::register($view);
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
 
-        $this->assertEquals(1, preg_match('#<link href="/runtime/web/yao/[0-9a-z]+\\.yao\\.css" rel="stylesheet">#', $content), 'Html view does not contain the optimized css file: ' . $content);
-        $this->assertEquals(1, preg_match('#<script src="/runtime/web/yao/[0-9a-z]+\\.yao\\.js">#', $content), 'Html view does not contain the optimized JS file: ' . $content);
+        $this->assertEquals(1
+                , preg_match('#<link href="/runtime/web/yao/.*?\\.yao\\.css"#', $content)
+                , 'Html view is not referencing the right optimized CSS file: ' . $content
+        );
+        $this->assertEquals(1
+                , preg_match('#<script src="/runtime/web/yao/[0-9a-z]+\\.yao\\.js">#', $content)
+                , 'Html view is not referencing the right optimized JS file: ' . $content
+        );
     }
 
-    public function testOptimizedCssFileExistsOnDefaults()
+    public function testOptimizedFilesExistOnDefaultBasePathAndBaseUrl()
     {
         $view = $this->mockView();
+        bundles\BasicAsset::register($view);
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
-        $cssUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
-        $jsUrl = $this->findByRegex('#<script src="(.*)?">#', $content, 1);
-        $cssPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $cssUrl);
-        $jsPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $jsUrl);
 
+        $cssUrl = $this->findHtmlTagFor('link', $content, 1);
+        $cssPath = $this->getOptmizedPath($cssUrl);
         $this->assertFileExists($cssPath, "Expected file '$cssUrl' could not be found in '$cssPath'.");
+
+        $jsUrl = $this->findHtmlTagFor('script', $content, 1);
+        $jsPath = $this->getOptmizedPath($jsUrl);
         $this->assertFileExists($jsPath, "Expected file '$jsUrl' could not be found in '$jsPath'.");
     }
 
-    public function testOptimizedCssFileExists()
+    public function testOptimizedFilesExistWhenBasePathAndBaseUrlWereChanged()
     {
         $view = $this->mockView([
-            'optimizedCssPath' => '@webroot/my/path',
-            'optimizedCssUrl' => '@web/my/path',
+            'publishPath' => '@webroot/my/path',
+            'publishUrl' => '@web/my/path',
         ]);
+        bundles\BasicAsset::register($view);
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
-        $cssUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
-        $jsUrl = $this->findByRegex('#<script src="(.*)?">#', $content, 1);
-        $cssPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $cssUrl);
-        $jsPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $jsUrl);
 
-        $this->assertFileExists($cssPath, "Expected file '$cssUrl' could not be found in '$cssPath'.");
-        $this->assertFileExists($jsPath, "Expected file '$jsUrl' could not be found in '$jsPath'.");
+        $cssUrl = $this->findHtmlTagFor('link', $content, 1);
+        $cssPath = $this->getOptmizedPath($cssUrl);
+        $this->assertFileExists($cssPath, "Expected file '$cssUrl' SHOULD be found in '$cssPath'.");
+
+        $jsUrl = $this->findHtmlTagFor('script', $content, 1);
+        $jsPath = $this->getOptmizedPath($jsUrl);
+        $this->assertFileExists($jsPath, "Expected file '$jsUrl' SHOULD be found in '$jsPath'.");
     }
 
-    public function testOptimizedCssFileNotExists()
+    public function testOptimizedFilesDoesNotExistWhenWrongConfig()
     {
         $view = $this->mockView([
-            'optimizedCssPath' => '@webroot/other/path',
+            'publishPath' => '@webroot/other/path',
+            'publishUrl' => '@webroot/xyz/path',
         ]);
+        bundles\BasicAsset::register($view);
         $content = $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']);
-        $cssUrl = $this->findByRegex('#<link href="(.*)?" rel="stylesheet">#', $content, 1);
-        $jsUrl = $this->findByRegex('#<script src="(.*)?">#', $content, 1);
-        $cssPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $cssUrl);
-        $jsPath = \Yii::getAlias('@webroot') . str_replace(\Yii::getAlias('@web'), '', $jsUrl);
 
+        $cssUrl = $this->findHtmlTagFor('link', $content, 1);
+        $cssPath = $this->getOptmizedPath($cssUrl);
         $this->assertFileNotExists($cssPath, "Expected file '$cssUrl' SHOULD NOT be found in '$cssPath'.");
+
+        $jsUrl = $this->findHtmlTagFor('script', $content, 1);
+        $jsPath = $this->getOptmizedPath($jsUrl);
         $this->assertFileNotExists($jsPath, "Expected file '$jsUrl' SHOULD NOT be found in '$jsPath'.");
     }
 
@@ -111,6 +126,20 @@ class ViewTest extends TestCase
     {
         $matches = [];
         preg_match($regex, $content, $matches);
-        return !isset($matches[$match]) ?: $matches[$match];
+        return !isset($matches[$match]) ? $matches: $matches[$match];
+    }
+
+    protected function getOptmizedPath($subject, $prefix = '@webroot', $exclude = '@web')
+    {
+        return \Yii::getAlias($prefix) . str_replace(\Yii::getAlias($exclude), '', $subject);
+    }
+
+    protected function findHtmlTagFor($type, $content, $match)
+    {
+        $regex = [
+            'link' => '#<link href="(.*?)" rel="stylesheet">#',
+            'script' => '#<script src="(.*?)">#',
+        ];
+        return $this->findByRegex($regex[$type], $content, $match);
     }
 }
