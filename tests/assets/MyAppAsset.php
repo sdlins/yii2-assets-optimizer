@@ -15,14 +15,14 @@ use yii\web\AssetBundle;
  */
 class MyAppAsset extends AssetBundle
 {
-    public $basePath = '@yaotests';
+    public $sourcePath = __DIR__;
     public $baseUrl = '@web';
     public $css = [
-        'assets/css/site.css',
-        'assets/css/other.css'
+        'css/site.css',
+        'css/other.css'
     ];
     public $js = [
-        'assets/js/main.js',
+        'js/main.js',
     ];
     public $depends = [
     ];
