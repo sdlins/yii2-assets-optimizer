@@ -88,12 +88,12 @@ class View extends \yii\web\View
     protected function optimizeJs()
     {
         foreach ($this->jsFiles as $jsPosition => $files) {
-            $result = $this->minifyFiles(array_keys($files), 'js');
+            $result = $this->minifyFiles(array_keys($files), 'js', $jsPosition);
             $this->saveOptimizedJsFile($result, $jsPosition);
         }
     }
 
-    protected function minifyFiles($fileUrls, $type)
+    protected function minifyFiles($fileUrls, $type, $jsPosition = self::POS_HEAD)
     {
         $min = ($type = strtolower($type)) === 'css' ? new Minify\CSS() : new Minify\JS;
         foreach ($fileUrls as $filePath) {
@@ -102,7 +102,7 @@ class View extends \yii\web\View
             if($type === 'css') {
                 unset($this->cssFiles[$filePath]);
             } else {
-                unset($this->jsFiles[$filePath]);
+                unset($this->jsFiles[$jsPosition][$filePath]);
             }
         }
         return $min->minify();
