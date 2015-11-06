@@ -108,7 +108,7 @@ class View extends \yii\web\View
         FileHelper::createDirectory($filePath);
         $finalPath = $filePath . DIRECTORY_SEPARATOR . $filename;
 
-        if (is_file($finalPath)) {
+        if (is_file($finalPath) && filesize($finalPath)) {
             return $finalPath;
         }
 
