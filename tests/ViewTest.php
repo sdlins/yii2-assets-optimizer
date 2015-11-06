@@ -99,6 +99,25 @@ class ViewTest extends TestCase
         $this->assertFileNotExists($jsPath, "Expected file '$jsUrl' SHOULD NOT be found in '$jsPath'.");
     }
 
+    public function testExternalAssetResourcesAreStillInTheRenderedResult()
+    {
+        $view = $this->mockView([
+            'publishPath' => '@webroot/some/path',
+        ]);
+        bundles\ExternalAsset::register($view);
+        $content = str_replace(["\r", "\n"], '', $view->renderFile('@yaotests/views/index.php', ['data' => 'Hello World!']));
+
+        $schemas = ['http://', 'https://', 'ftp://', '//'];
+        $mainRegex = '(' . implode('|', $schemas) . ').*?';
+        $found = [];
+
+        preg_match_all('@<link href="' . $mainRegex . '" rel="stylesheet">@s', $content, $found);
+        $this->assertEquals(2, count($found[0]), 'The rendered page does not contain the TWO expected external CSS assets: ' . $content);
+
+        preg_match_all('#<script src="' . $mainRegex . '">#', $content, $found);
+        $this->assertEquals(2, count($found[0]), 'The rendered page does not contain the TWO expected external JS assets: ' . $content);
+    }
+
     /**
      * @return View
      */
