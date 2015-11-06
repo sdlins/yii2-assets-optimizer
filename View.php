@@ -17,37 +17,23 @@ class View extends \yii\web\View
     /** @var bool */
     public $combine = true;
     /**
-     * @var string Path where optimized css file will be published in. If you change this,
-     * you *must* change [[optmizedCssPath]] accordingly.
+     * @var string Path where optimized files will be published in. If you change this,
+     * you *must* change [[publishUrl]] accordingly.
      * Optional. Defaults to '@webroot/yao'.
      */
-    public $optimizedCssPath = '@webroot/yao';
+    public $publishPath = '@webroot/yao';
     /**
-     * @var string Web acessible Url where optimized css file(s) will be published in. 
-     * *Must* be in according to [[optmizedCssPath]].
+     * @var string Web acessible Url where optimized files will be published in.
+     * *Must* be in according to [[publishPath]].
      * Optional. Defaults to '@web/yao'.
      */
-    public $optimizedCssUrl = '@web/yao';
-    /**
-     * @var string Path where optimized css file will be published in. If you change this,
-     * you *must* change [[optmizedCssPath]] accordingly.
-     * Optional. Defaults to '@webroot/yao'.
-     */
-    public $optimizedJsPath = '@webroot/yao';
-    /**
-     * @var string Web acessible Url where optimized css file(s) will be published in.
-     * *Must* be in according to [[optmizedCssPath]].
-     * Optional. Defaults to '@web/yao'.
-     */
-    public $optimizedJsUrl = '@web/yao';
+    public $publishUrl = '@web/yao';
 
     public function init()
     {
         parent::init();
-        $this->optimizedCssPath = \Yii::getAlias($this->optimizedCssPath);
-        $this->optimizedCssUrl = \Yii::getAlias($this->optimizedCssUrl);
-        $this->optimizedJsPath = \Yii::getAlias($this->optimizedJsPath);
-        $this->optimizedJsUrl = \Yii::getAlias($this->optimizedJsUrl);
+        $this->publishPath = \Yii::getAlias($this->publishPath);
+        $this->publishUrl = \Yii::getAlias($this->publishUrl);
     }
 
     /**
@@ -127,15 +113,15 @@ class View extends \yii\web\View
 
     protected function saveOptimizedCssFile($content)
     {
-        $finalPath = $this->saveFile($content, $this->optimizedCssPath, 'css');
-        $finalUrl = $this->optimizedCssUrl . DIRECTORY_SEPARATOR . basename($finalPath);
+        $finalPath = $this->saveFile($content, $this->publishPath, 'css');
+        $finalUrl = $this->publishUrl . DIRECTORY_SEPARATOR . basename($finalPath);
         $this->cssFiles[$finalPath] = Html::cssFile($finalUrl);
     }
 
     protected function saveOptimizedJsFile($content, $jsPosition)
     {
-        $finalPath = $this->saveFile($content, $this->optimizedJsPath, 'js');
-        $finalUrl = $this->optimizedJsUrl . DIRECTORY_SEPARATOR . basename($finalPath);
+        $finalPath = $this->saveFile($content, $this->publishPath, 'js');
+        $finalUrl = $this->publishUrl . DIRECTORY_SEPARATOR . basename($finalPath);
         $this->jsFiles[$jsPosition][$finalPath] = Html::jsFile($finalUrl);
     }
 
