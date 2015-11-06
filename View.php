@@ -97,15 +97,25 @@ class View extends \yii\web\View
     {
         $min = ($type = strtolower($type)) === 'css' ? new Minify\CSS() : new Minify\JS;
         foreach ($fileUrls as $filePath) {
-            $resolvedPath = $this->resolvePath($filePath);
-            $min->add($resolvedPath);
-            if($type === 'css') {
-                unset($this->cssFiles[$filePath]);
-            } else {
-                unset($this->jsFiles[$jsPosition][$filePath]);
+            if(!$this->isExternalSchema($filePath)) {
+                $resolvedPath = $this->resolvePath($filePath);
+                $min->add($resolvedPath);
+                if($type === 'css'){
+                    unset($this->cssFiles[$filePath]);
+                }else {
+                    unset($this->jsFiles[$jsPosition][$filePath]);
+                }
             }
         }
         return $min->minify();
+    }
+
+    protected function isExternalSchema($path)
+    {
+        $schemas = ['http://', 'https://', 'ftp://', '//'];
+        $mainRegex = '((' . implode('|', $schemas) . ').*?)';
+        preg_match($mainRegex, $path, $matches);
+        return isset($matches[1]);
     }
 
     protected function resolvePath($path)
