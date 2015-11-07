@@ -1,16 +1,14 @@
 <?php
-namespace slinstj\assets\optimizer\tests;
+namespace slinstj\AssetsOptimizer\tests;
 
 use yii\di\Container;
 use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
- * Description of TestCase
- *
- * @author Sidney Lins <slinstj at gmail.com>
+ * This is the base class for all yii framework unit tests.
  */
-class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * Clean up after test.
@@ -25,8 +23,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Populates Yii::$app with a new application
      * The application will be destroyed on tearDown() automatically.
-      *
-     * @param array $config The application configuration, optional
+     * @param array $config The application configuration, if needed
      * @param string $appClass name of the application class to create
      */
     protected function mockApplication($config = [], $appClass = '\yii\console\Application')
@@ -38,11 +35,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
         ], $config));
     }
 
-   protected function mockWebApplication($config = [], $appClass = '\yii\web\Application')
+    protected function mockWebApplication($config = [], $appClass = '\yii\web\Application')
     {
         new $appClass(ArrayHelper::merge([
             'id' => 'testapp',
-            'name' => 'Yii2',
             'basePath' => __DIR__,
             'vendorPath' => dirname(__DIR__) . '/vendor',
             'components' => [
@@ -51,9 +47,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
                     'scriptFile' => __DIR__ .'/index.php',
                     'scriptUrl' => '/index.php',
                 ],
-                'view' => [
-                    'class' => 'slinstj\assets\optimizer\AssetsOptimizerView',
-                ]
             ]
         ], $config));
     }
@@ -67,4 +60,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
         Yii::$container = new Container();
     }
 
+    protected function debug($data)
+    {
+        return fwrite(STDERR, print_r($data, TRUE));
+    }
 }
