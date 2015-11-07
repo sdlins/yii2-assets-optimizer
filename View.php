@@ -45,7 +45,7 @@ class View extends \yii\web\View
 
         $content = ob_get_clean();
 
-        if ($this->minify === true) {
+        if ($this->minify === true && !\Yii::$app->request->isAjax) {
             $this->optimizeCss();
             $this->optimizeJs();
         }
