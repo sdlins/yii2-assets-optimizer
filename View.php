@@ -29,6 +29,8 @@ class View extends \yii\web\View
      */
     public $publishUrl = '@web/yao';
 
+    protected $filesToMinify;
+
     public function init()
     {
         parent::init();
@@ -46,6 +48,7 @@ class View extends \yii\web\View
         $content = ob_get_clean();
 
         if ($this->minify === true && !\Yii::$app->request->isAjax) {
+            $this->resolveAllAssetPaths();
             $this->optimizeCss();
             $this->optimizeJs();
         }
@@ -65,33 +68,58 @@ class View extends \yii\web\View
     /**
      * @return self
      */
+
+    protected function resolveAllAssetPaths()
+    {
+        foreach (array_keys($this->cssFiles) as $filePath) {
+            if (!$this->isExternalSchema($filePath)) {
+                $resolvedPath = $this->resolvePath($filePath);
+                $this->filesToMinify['css'][] = $resolvedPath;
+                unset($this->cssFiles[$filePath]);
+            }
+        }
+        foreach ($this->jsFiles as $position => $files) {
+            foreach (array_keys($files) as $filePath) {
+                if (!$this->isExternalSchema($filePath)) {
+                    $resolvedPath = $this->resolvePath($filePath);
+                    $this->filesToMinify['js'][$position][] = $resolvedPath;
+                    unset($this->jsFiles[$position][$filePath]);
+                }
+            }
+        }
+    }
+
     protected function optimizeCss()
     {
-        $result = $this->minifyFiles(array_keys($this->cssFiles), 'css');
+        if (($cache = $this->getAppCache())) {
+            if (!($result = $cache->get('cssResult'))) {
+                $cache->set('cssResult', ($result = $this->minifyFiles($this->filesToMinify['css'], 'css')));
+            }
+        } else {
+            $result = $this->minifyFiles($this->filesToMinify['css'], 'css');
+        }
         $this->saveOptimizedCssFile($result);
     }
 
     protected function optimizeJs()
     {
-        foreach ($this->jsFiles as $jsPosition => $files) {
-            $result = $this->minifyFiles(array_keys($files), 'js', $jsPosition);
+        foreach ($this->filesToMinify['js'] as $jsPosition => $files) {
+            if (($cache = $this->getAppCache())) {
+                if (!($result = $cache->get('jsResult' . $jsPosition))) {
+                    $cache->set('jsResult' . $jsPosition, ($result = $this->minifyFiles($files, 'js')));
+                }
+            } else {
+                $result = $this->minifyFiles($files, 'js');
+            }
             $this->saveOptimizedJsFile($result, $jsPosition);
         }
     }
 
-    protected function minifyFiles($fileUrls, $type, $jsPosition = self::POS_HEAD)
+    protected function minifyFiles($fileUrls, $type)
     {
         $min = ($type = strtolower($type)) === 'css' ? new Minify\CSS() : new Minify\JS;
-        foreach ($fileUrls as $filePath) {
-            if(!$this->isExternalSchema($filePath)) {
-                $resolvedPath = $this->resolvePath($filePath);
-                $min->add($resolvedPath);
-                if($type === 'css'){
-                    unset($this->cssFiles[$filePath]);
-                }else {
-                    unset($this->jsFiles[$jsPosition][$filePath]);
-                }
-            }
+        foreach ($fileUrls as $resolvedPath) {
+            $min->add($resolvedPath);
         }
         return $min->minify();
     }
@@ -140,6 +168,18 @@ class View extends \yii\web\View
         } else {
             throw new \Exception("It was not possible to save the file '$finalPath'.");
         }
+    }
 
+    protected function isCacheEnabled()
+    {
+        return isset(\Yii::$app->cache);
+    }
+
+    /**
+     * @return \yii\caching\Cache;
+     */
+    protected function getAppCache()
+    {
+        return $this->isCacheEnabled() ? \Yii::$app->cache : null;
     }
 }
