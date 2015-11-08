@@ -91,14 +91,26 @@ class View extends \yii\web\View
 
     protected function optimizeCss()
     {
-        $result = $this->minifyFiles($this->filesToMinify['css'], 'css');
+        if (($cache = $this->getAppCache())) {
+            if (!($result = $cache->get('cssResult'))) {
+                $cache->set('cssResult', ($result = $this->minifyFiles($this->filesToMinify['css'], 'css')));
+            }
+        } else {
+            $result = $this->minifyFiles($this->filesToMinify['css'], 'css');
+        }
         $this->saveOptimizedCssFile($result);
     }
 
     protected function optimizeJs()
     {
         foreach ($this->filesToMinify['js'] as $jsPosition => $files) {
-            $result = $this->minifyFiles($files, 'js');
+            if (($cache = $this->getAppCache())) {
+                if (!($result = $cache->get('jsResult' . $jsPosition))) {
+                    $cache->set('jsResult' . $jsPosition, ($result = $this->minifyFiles($files, 'js')));
+                }
+            } else {
+                $result = $this->minifyFiles($files, 'js');
+            }
             $this->saveOptimizedJsFile($result, $jsPosition);
         }
     }
@@ -163,6 +175,9 @@ class View extends \yii\web\View
         return isset(\Yii::$app->cache);
     }
 
+    /**
+     * @return \yii\caching\Cache;
+     */
     protected function getAppCache()
     {
         return $this->isCacheEnabled() ? \Yii::$app->cache : null;
