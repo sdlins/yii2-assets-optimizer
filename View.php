@@ -156,6 +156,15 @@ class View extends \yii\web\View
         } else {
             throw new \Exception("It was not possible to save the file '$finalPath'.");
         }
+    }
 
+    protected function isCacheEnabled()
+    {
+        return isset(\Yii::$app->cache);
+    }
+
+    protected function getAppCache()
+    {
+        return $this->isCacheEnabled() ? \Yii::$app->cache : null;
     }
 }
