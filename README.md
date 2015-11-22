@@ -1,8 +1,8 @@
 Yii 2 Assets Optmizer
 ===========================
 
-Unifies and compresses js and css files in your AssetBundles. Uses internal server cache
-to speed up all the process, reducing the time wasting.
+Fast and reliable unifier and compressor for CSS and JS files inside your Yii2 AssetBundles.
+Uses internal server cache to speed up all the process, reducing the time wasting.
 
 Report your issues
 -------
@@ -11,7 +11,7 @@ Report your issues
 Installation
 ------------
 ```bash
-composer require "slinstj/yii2-assets-optmizer:*"
+composer require "slinstj/yii2-assets-optimizer:*"
 ```
 
 Configuration/Usage
@@ -19,12 +19,37 @@ Configuration/Usage
 ```php
 <?
 return [
-	// ...
-	'components' => [
-		// ...
-		'view' => [
-			'class' => '\slinstj\assets\optmizier\View',
-		]
-	]
+    // ...
+    'components' => [
+        // ...
+        'view' => [
+            'class' => '\slinstj\assets\optmizier\View',
+        ]
+    ]
 ];
 ```
+
+Additional Options
+---------
+```php
+<?
+return [
+    // ...
+    'components' => [
+        // ...
+        'view' => [
+            'class' => '\slinstj\assets\optmizier\View',
+            'minify' => true, // Could be '!YII_DEBUG' for example.
+            'publishPath' => '@webroot/yao', // Folder where optimized file(s) will be published in.
+            'publishUrl' => '@web/yao', // Web acessible url. Must be in accord to 'publishPath'.
+        ]
+    ]
+];
+```
+
+Next versions
+---------
+* To improve cache by using ChainedDependency - On change JS and CSS files, the optimized
+file(s) will be regenerated automatically. For now, **you should clear the cache manually**.
+*Please, check this to know how: [cache-flushing](http://www.yiiframework.com/doc-2.0/guide-caching-data.html#cache-flushing).*
+* To use events instead of the own View object;
