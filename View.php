@@ -68,7 +68,6 @@ class View extends \yii\web\View
     /**
      * @return self
      */
-
     protected function resolveAllAssetPaths()
     {
         foreach (array_keys($this->cssFiles) as $filePath) {
