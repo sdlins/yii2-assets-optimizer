@@ -1,4 +1,4 @@
-Yii 2 Assets Optmizer
+Yii 2 Assets Optimizer
 ===========================
 
 Fast and reliable unifier and compressor for CSS and JS files inside your Yii2 AssetBundles.
@@ -11,7 +11,7 @@ Report your issues
 Installation
 ------------
 ```bash
-composer require "slinstj/yii2-assets-optimizer:*"
+composer require "slinstj/yii2-assets-optimizer:>=0.1-stable"
 ```
 
 Configuration/Usage
@@ -23,7 +23,7 @@ return [
     'components' => [
         // ...
         'view' => [
-            'class' => '\slinstj\assets\optmizier\View',
+            'class' => '\slinstj\assets\optimizer\View',
         ]
     ]
 ];
@@ -38,7 +38,7 @@ return [
     'components' => [
         // ...
         'view' => [
-            'class' => '\slinstj\assets\optmizier\View',
+            'class' => '\slinstj\assets\optimizer\View',
             'minify' => true, // Could be '!YII_DEBUG' for example.
             'publishPath' => '@webroot/yao', // Folder where optimized file(s) will be published in.
             'publishUrl' => '@web/yao', // Web acessible url. Must be in accord to 'publishPath'.
