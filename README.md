@@ -53,3 +53,6 @@ Next versions
 file(s) will be regenerated automatically. For now, **you should clear the cache manually**.
 *Please, check this to know how: [cache-flushing](http://www.yiiframework.com/doc-2.0/guide-caching-data.html#cache-flushing).*
 * To use events instead of the own View object;
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/slinstj/yii2-assets-optimizer/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
